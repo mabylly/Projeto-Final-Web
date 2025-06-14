@@ -1,6 +1,11 @@
-import Header from "../components/Header";
 
-const recursoSearch= "Matemática"; // Exemplo de recurso pesquisado
+import Header from "../components/Header";
+import ResultsDisplay from "../components/ResultsDisplay";
+
+const recursoSearch="Ciclo da agua";
+const serieSearch="6º ano";
+
+
 
 function Searchpage() {
   return (  
@@ -8,8 +13,10 @@ function Searchpage() {
     <Header isLoggedIn={true} />
     <main>
       <div id="title">
-        <h1>Recursos para: {recursoSearch}</h1>
+        <h1>Recursos para: {recursoSearch} - {serieSearch}</h1>
       </div>
+
+      <ResultsDisplay/>      
     </main>
     </>
   );
