@@ -17,7 +17,7 @@ function Searchpage() {
 
   return (
     <div className="min-h-screen bg-yellow-50 font-sans">
-      <Header isLoggedIn={true} />
+      <Header isLoggedIn={false} />
       <main className="max-w-2xl mx-auto px-6 py-12">
         <h2 className="text-3xl font-bold text-gray-900 mb-8">
           Obtenha recursos para alunos sobre...
