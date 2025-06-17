@@ -20,7 +20,7 @@ interface CardResultProps {
   isCopied?: boolean;
 }
 
-export default function CardResult({ title, icon, children, onCopy, isCopied = false }: CardResultProps) {
+export default function  CardResult({ title, icon, children, onCopy, isCopied = false }: CardResultProps) {
   return (
     // O container principal do card, com estilos de fundo, borda e sombra.
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">

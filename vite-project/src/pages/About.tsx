@@ -1,12 +1,10 @@
 // src/pages/About.tsx
-
-import React from 'react';
-// Importando ícones para as redes sociais
-import { FaLinkedin, FaInstagram, FaTwitter, FaFacebook } from 'react-icons/fa';
-
+import Header from '../components/Header'; 
 // Componente da Página Sobre
-const About: React.FC = () => {
+export default function About (){
   return (
+    <>
+    <Header isLoggedIn={false} />
     <div className="bg-primary-yellow-500 text-gray-900 font-sans p-5 md:p-10 flex flex-col items-center">
 
       {/* Seção de História */}
@@ -72,52 +70,7 @@ const About: React.FC = () => {
         </div>
       </section>
 
-      {/* Seção de Reconhecimentos e Parcerias */}
-      <section className="w-full max-w-4xl mb-16 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8 pb-2 border-b-4 border-gray-900 inline-block">
-          Reconhecimentos e Parcerias
-        </h2>
-        <ul className="mt-4 text-lg text-gray-700 list-none space-y-2">
-          <li>🏆 Prêmio Inovação em Educação 2025</li>
-          <li>🌟 Destaque no "Tech for Good Summit"</li>
-          <li>🤝 Parceria com a Universidade Federal de Tecnologia</li>
-          <li>🚀 Acelerada pela "Educa Ventures"</li>
-        </ul>
-      </section>
-
-      {/* Seção da Sede (Google Maps) */}
-      <section className="w-full max-w-4xl mb-16 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8 pb-2 border-b-4 border-gray-900 inline-block">
-          Nossa Sede
-        </h2>
-        <p className="mt-4 text-lg">Estamos localizados no coração da inovação. Venha nos visitar!</p>
-        <div className="mt-6 w-full border-4 border-gray-900 rounded-lg overflow-hidden shadow-lg">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3663.3410461876423!2d-51.4247833237887!3d-23.37599425488581!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94926efbadb49639%3A0x44a361849a63b2a!2sUniversidade%20Tecnol%C3%B3gica%20Federal%20do%20Paran%C3%A1%20-%20Campus%20Apucarana!5e0!3m2!1spt-BR!2sbr!4v1718593005524!5m2!1spt-BR!2sbr"
-            className="w-full h-96"
-            style={{ border: 0 }}
-            allowFullScreen={true}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          ></iframe>
-        </div>
-      </section>
-
-      {/* Seção de Redes Sociais */}
-      <section className="w-full max-w-4xl text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8 pb-2 border-b-4 border-gray-900 inline-block">
-          Conecte-se Conosco
-        </h2>
-        <div className="flex justify-center items-center gap-8 mt-4">
-            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-5xl text-gray-800 hover:text-white hover:scale-110 transform transition-all duration-300"><FaLinkedin /></a>
-            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-5xl text-gray-800 hover:text-white hover:scale-110 transform transition-all duration-300"><FaInstagram /></a>
-            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="text-5xl text-gray-800 hover:text-white hover:scale-110 transform transition-all duration-300"><FaTwitter /></a>
-            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-5xl text-gray-800 hover:text-white hover:scale-110 transform transition-all duration-300"><FaFacebook /></a>
-        </div>
-      </section>
-
     </div>
+    </>
   );
 };
-
-export default About;

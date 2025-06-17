@@ -7,7 +7,7 @@ const serieSearch="6º ano";
 
 
 
-function Searchpage() {
+function Resultpage() {
   return (  
     <>
     <Header isLoggedIn={true} />
@@ -22,4 +22,4 @@ function Searchpage() {
   );
 } 
 
-export default Searchpage;
+export default Resultpage;
