@@ -1,3 +1,4 @@
+//arquivo para simular o banco de dados de usuários
 export interface User {
   id: string;
   name: string;
@@ -12,7 +13,7 @@ const users: User[] = [
     id: '1',
     name: 'Usuário Teste',
     email: 'teste@pedagogia.com',
-    password: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewkKpzMo6.K5U5/G',
+    password: '$2b$12$OQDwUSOVmlVVBqsVXf7it.eob1Xv37cLZI87ZUy6DIu8iuL4JYSBS',//1234
     createdAt: new Date(),
     updatedAt: new Date()
   }

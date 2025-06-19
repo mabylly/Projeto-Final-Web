@@ -111,7 +111,9 @@ class AuthService {
 
     try {
       // Verificar se o token não está expirado
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      const payload = this.decodeTokenPayload(token);
+      if (!payload) return false;
+      
       const now = Date.now() / 1000;
       
       if (payload.exp && payload.exp < now) {
@@ -137,19 +139,47 @@ class AuthService {
     }
   }
 
+  // Método corrigido para decodificar token com UTF-8 adequado
+  private decodeTokenPayload(token: string): any {
+    try {
+      // Separar as partes do token
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+
+      // Decodificar o payload (segunda parte)
+      const payload = parts[1];
+      
+      // Adicionar padding se necessário
+      const paddedPayload = payload + '='.repeat((4 - payload.length % 4) % 4);
+      
+      // Decodificar de base64 para string
+      const decodedString = atob(paddedPayload);
+      
+      // Converter string para UTF-8 adequadamente
+      const utf8String = decodeURIComponent(escape(decodedString));
+      
+      return JSON.parse(utf8String);
+    } catch (error) {
+      console.error('Erro ao decodificar payload do token:', error);
+      return null;
+    }
+  }
+
   getUserFromToken(): { id: string; email: string; name: string } | null {
     const token = this.getToken();
     if (!token) return null;
 
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      const payload = this.decodeTokenPayload(token);
+      if (!payload) return null;
+
       return {
         id: payload.id,
         email: payload.email,
         name: payload.name
       };
     } catch (error) {
-      console.error('Erro ao decodificar token:', error);
+      console.error('Erro ao obter usuário do token:', error);
       return null;
     }
   }
