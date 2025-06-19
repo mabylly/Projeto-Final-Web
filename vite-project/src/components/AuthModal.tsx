@@ -1,120 +1,97 @@
-import React, { useEffect, useState } from 'react'; 
-import { X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Modal } from "../components/Modal";
+import { AuthForm } from "../components/AuthForm";
+import { authService } from '../services/authServices'; 
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialMode?: 'login' | 'register';
+  title?: string;
+  subtitle?: {
+    login: string;
+    register: string;
+  };
+  onSuccess?: (user: any) => void; // Callback para quando o login/registro for bem-sucedido
 }
 
-export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalProps) {
+export default function AuthModal({ 
+  isOpen, 
+  onClose, 
+  initialMode = 'login',
+  title = "pedagog.ia",
+  subtitle = {
+    login: "Entre na sua conta",
+    register: "Crie sua conta gratuita"
+  },
+  onSuccess
+}: AuthModalProps) {
   const [mode, setMode] = useState<'login' | 'register'>(initialMode);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setMode(initialMode);
-  }, [initialMode]); 
+    setError(null); // Limpar erro quando trocar de modo
+  }, [initialMode]);
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: ''
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-  //Ainda falta a validação de email e senha, criptografação de senha, e integração com backend
-  const handleSubmit = () => {
-    if (mode === 'login') {
-      console.log('Login:', { email: formData.email, password: formData.password });
-    } else {
-      console.log('Cadastro:', formData);
+  const handleSubmit = async (formData: { name: string; email: string; password: string }) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      let response;
+      
+      if (mode === 'login') {
+        response = await authService.login({ 
+          email: formData.email, 
+          password: formData.password 
+        });
+        console.log('Usuário logado:', response.user);
+      } else {
+        response = await authService.register(formData);
+        console.log('Usuário cadastrado:', response.user);
+      }
+      
+      // Chamar callback de sucesso se fornecido
+      if (onSuccess) {
+        onSuccess(response.user);
+      }
+      
+      onClose(); 
+    } catch (err: any) {
+      console.error('Erro na autenticação:', err);
+      setError(err.message || 'Erro na autenticação');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const switchMode = () => {
     setMode(mode === 'login' ? 'register' : 'login');
-    setFormData({ name: '', email: '', password: '' });
+    setError(null); // Limpar erro quando trocar de modo
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-white/10 flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-white rounded-lg p-8 w-full max-w-md mx-4 relative shadow-xl" onClick={(e) => e.stopPropagation()}>
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          <X size={24} />
-        </button>
-
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">pedagog.ia</h1>
-          <p className="text-gray-600">
-            {mode === 'login' ? 'Entre na sua conta' : 'Crie sua conta gratuita'}
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          {mode === 'register' && (
-            <div>
-              <input
-                type="text"
-                name="name"
-                placeholder="Nome completo"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none transition-all"
-              />
-            </div>
-          )}
-
-          <div className="relative">
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none transition-all"
-            />
-          </div>
-
-          <div className="relative">
-            <input
-              type="password"
-              name="password"
-              placeholder="Senha"
-              value={formData.password}
-              onChange={handleInputChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none transition-all"
-            />
-          </div>
-
-          <button
-            onClick={handleSubmit}
-            className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-3 px-4 rounded-lg transition-colors duration-200"
-          >
-            {mode === 'login' ? 'Entrar' : 'Criar Conta'}
-          </button>
-        </div>
-
-        <div className="mt-6 text-center">
-          <span className="text-gray-500">
-            {mode === 'login' ? 'Não tem uma conta?' : 'Já tem uma conta?'}
-          </span>
-          <button
-            onClick={switchMode}
-            className="ml-2 text-yellow-600 hover:text-yellow-700 font-semibold transition-colors"
-          >
-            {mode === 'login' ? 'Cadastre-se' : 'Faça login'}
-          </button>
-        </div>
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">{title}</h1>
+        <p className="text-gray-600">
+          {mode === 'login' ? subtitle.login : subtitle.register}
+        </p>
       </div>
-    </div>
+
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
+        </div>
+      )}
+
+      <AuthForm
+        mode={mode}
+        onSubmit={handleSubmit}
+        onSwitchMode={switchMode}
+      />
+    </Modal>
   );
 }

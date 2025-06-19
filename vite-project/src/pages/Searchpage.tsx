@@ -15,6 +15,11 @@ function Searchpage() {
     "1º ano (Médio)", "2º ano (Médio)", "3º ano (Médio)"
   ];
 
+  const handleGenerate = () => {
+    console.log("Gerando recursos para:", { tema, serie });
+    // Lógica de geração aqui
+  };
+
   return (
     <div className="min-h-screen bg-yellow-50 font-sans">
       <Header isLoggedIn={false} />
@@ -23,22 +28,25 @@ function Searchpage() {
           Obtenha recursos para alunos sobre...
         </h2>
 
-        <InputField 
+        <InputField
           label="Literalmente qualquer coisa"
           placeholder="Digite um assunto ou tema"
-          icon={<Globe size={18} className="text-yellow-500" />} 
+          icon={<Globe size={18} className="text-yellow-500" />}
           value={tema}
           onChange={(e) => setTema(e.target.value)}
         />
 
-        <SelectField 
+        <SelectField
           label="Personalize seus recursos"
           options={series}
           value={serie}
           onChange={(e) => setSerie(e.target.value)}
+          placeholder="Selecione uma série" 
         />
 
-        <GenerateButton />
+        <GenerateButton onClick={handleGenerate}>
+          Gerar Recursos
+        </GenerateButton>
       </main>
     </div>
   );
