@@ -12,7 +12,7 @@ interface AuthModalProps {
     login: string;
     register: string;
   };
-  onSuccess?: (user: any) => void; // Callback para quando o login/registro for bem-sucedido
+  onSuccess?: (user: any) => void; 
 }
 
 export default function AuthModal({ 
@@ -32,7 +32,7 @@ export default function AuthModal({
 
   useEffect(() => {
     setMode(initialMode);
-    setError(null); // Limpar erro quando trocar de modo
+    setError(null); 
   }, [initialMode]);
 
   const handleSubmit = async (formData: { name: string; email: string; password: string }) => {
@@ -69,7 +69,7 @@ export default function AuthModal({
 
   const switchMode = () => {
     setMode(mode === 'login' ? 'register' : 'login');
-    setError(null); // Limpar erro quando trocar de modo
+    setError(null); 
   };
 
   return (
