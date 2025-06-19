@@ -27,6 +27,15 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// --- Rota 404 Catch-all ---
+// Esta rota DEVE ser a penúltima definida, ANTES do middleware de tratamento de erros
+app.use((req, res, next) => {
+  res.status(404).json({
+    status: 404,
+    message: 'Recurso não encontrado. A página ou API que você está tentando acessar não existe.'
+  });
+});
+
 // Middleware de tratamento de erros
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Erro não tratado:', err);
