@@ -3,7 +3,7 @@ import Searchpage from "./pages/Searchpage";
 import About from "./pages/About";
 
 //temporario enquanto nao temos sistema de rotas
-const trocarPagina=1; // 1 para Searchpage, 2 para Resultpage, 3 para About
+const trocarPagina=3; // 1 para Searchpage, 2 para Resultpage, 3 para About
 
 function App() {
   return (
