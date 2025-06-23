@@ -5,7 +5,7 @@ import TeamMember from './TeamMember.tsx'; // Importando o novo componente
 // Dados da equipe para facilitar a manutenção
 const teamMembers = [
   {
-    imageUrl: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+    imageUrl: "https://github.com/mabylly/Projeto-Final-Web/blob/f2733a31298ee073b031b25f30e5171e24431272/vite-project/public/images/perfil%20mabylly.jpeg?raw=true",
     name: "Mabylly Neres",
     role: "CEO & Co-fundadora"
   },
