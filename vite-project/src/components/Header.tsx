@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { User } from 'lucide-react';
+
 import AuthModal from '../components/AuthModal';
 import { authService } from '../services/authServices';
 
@@ -96,13 +98,16 @@ export default function Header({ onAuthChange }: HeaderProps) {
   return (
     <>
       <header className="flex justify-between items-center px-6 py-4 bg-yellow-50 text-gray-700 font-semibold">
-        <h1 className="text-2xl font-bold text-gray-900">pedagog.ia</h1>
+        
+        <Link to="/" className="text-2xl font-bold text-gray-900">
+          pedagog.ia
+        </Link>
                   
         <nav className="flex items-center space-x-6">
           {/* Link Sobre nos dois headers */}
-          <a href="#" className="px-3 py-2 rounded-md hover:bg-yellow-200 transition-colors duration-200">
+          <Link to="/about" className="px-3 py-2 rounded-md hover:bg-yellow-200 transition-colors duration-200">
             Sobre
-          </a>
+          </Link>
            
           {isLoggedIn ? (
             // Navbar para usuário LOGADO

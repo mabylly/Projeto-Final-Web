@@ -34,7 +34,7 @@ export default function HomePage() {
       
       const data = await response.json();
 
-      //console.log("Resposta da API:", JSON.stringify(data, null, 2));
+      console.log("Resposta da API:", JSON.stringify(data, null, 2));
 
       // Navegamos para a página de resultados, passando os dados via 'state'
       navigate('/results', { state: { results: data } });
