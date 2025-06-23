@@ -21,6 +21,8 @@ export default function HomePage() {
     setIsLoading(true);
     setError(null);
 
+    // Fazemos a requisição para a API do backend
+    // Passando o tópico e a série como corpo da requisição
     try {
       const response = await fetch('http://localhost:3001/api/generate', {
         method: 'POST',
@@ -32,7 +34,7 @@ export default function HomePage() {
       
       const data = await response.json();
 
-      console.log("Resposta da API:", JSON.stringify(data, null, 2));
+      //console.log("Resposta da API:", JSON.stringify(data, null, 2));
 
       // Navegamos para a página de resultados, passando os dados via 'state'
       navigate('/results', { state: { results: data } });
