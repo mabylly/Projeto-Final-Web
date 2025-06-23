@@ -25,11 +25,11 @@ interface MultipleChoiceContent {
 // --- FIM DA MUDANÇA ---
 
 interface OpenEndedContent {
-  prompt: string;
+  question: string;
 }
 
 interface VideoLinksContent {
-  videos: { id: string; title: string; url: string; platform: string }[];
+  links: { id: string; title: string; url: string; platform: string }[];
 }
 
 

@@ -2,7 +2,7 @@
 // É um array de objetos, onde cada objeto representa um card de resultado.
 
 
-import type { Result } from '../types';
+import type { Result } from '../types/result';
 
 export const resultsMock: Result[] = [
   {

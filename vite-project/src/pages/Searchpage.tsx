@@ -1,13 +1,19 @@
-import { useState } from "react";
-import Header from "../components/Header";
 import { InputField } from "../components/InputField";
 import { SelectField } from "../components/SelectField";
 import { GenerateButton } from "../components/GenerateButton";
 import { Globe } from "lucide-react";
 
-function Searchpage() {
-  const [tema, setTema] = useState("");
-  const [serie, setSerie] = useState("");
+interface SearchpageProps {
+  topic: string;
+  setTopic: (value: string) => void;
+  grade: string;
+  setGrade: (value: string) => void;
+  onSearch: () => void; // A função que dispara a busca
+  isLoading: boolean;
+}
+
+export default function Searchpage({ topic, setTopic, grade, setGrade, onSearch, isLoading }: SearchpageProps) {
+
 
   const series = [
     "1º ano (Fundamental)", "2º ano (Fundamental)", "3º ano (Fundamental)", "4º ano (Fundamental)",
@@ -15,41 +21,35 @@ function Searchpage() {
     "1º ano (Médio)", "2º ano (Médio)", "3º ano (Médio)"
   ];
 
-  const handleGenerate = () => {
-    console.log("Gerando recursos para:", { tema, serie });
-    // Lógica de geração aqui
-  };
+  return (     
+    <main className="max-w-2xl mx-auto px-6 py-12">
+      <h2 className="text-3xl font-bold text-gray-900 mb-8">
+        Obtenha recursos para alunos sobre...
+      </h2>
 
-  return (
-    <div className="min-h-screen bg-yellow-50 font-sans">
-      <Header isLoggedIn={false} />
-      <main className="max-w-2xl mx-auto px-6 py-12">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">
-          Obtenha recursos para alunos sobre...
-        </h2>
+      <InputField
+        label="Literalmente qualquer coisa"
+        placeholder="Digite um assunto ou tema"
+        icon={<Globe size={18} className="text-yellow-500" />}
+        value={topic}
+        onChange={(e) => setTopic(e.target.value)}
+      />
 
-        <InputField
-          label="Literalmente qualquer coisa"
-          placeholder="Digite um assunto ou tema"
-          icon={<Globe size={18} className="text-yellow-500" />}
-          value={tema}
-          onChange={(e) => setTema(e.target.value)}
-        />
+      <SelectField
+        label="Personalize seus recursos"
+        options={series}
+        value={grade}
+        onChange={(e) => setGrade(e.target.value)}
+        placeholder="Selecione uma série" 
+      />
 
-        <SelectField
-          label="Personalize seus recursos"
-          options={series}
-          value={serie}
-          onChange={(e) => setSerie(e.target.value)}
-          placeholder="Selecione uma série" 
-        />
-
-        <GenerateButton onClick={handleGenerate}>
+      <GenerateButton 
+        onClick={onSearch}
+        disabled={isLoading || !topic || !grade}
+        >
           Gerar Recursos
-        </GenerateButton>
-      </main>
-    </div>
+      </GenerateButton>
+    </main>
   );
 }
 
-export default Searchpage;

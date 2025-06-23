@@ -1,9 +1,17 @@
 import { useState } from 'react';
 import { BookOpen, ClipboardCheck, Lightbulb, Link, Youtube, Check } from 'lucide-react';
-import { resultsMock } from "../mocks/resultMock";
+
 import CardResult from "../components/CardResult";
 import ToggleSwitch from '../components/ToggleSwitch';
 
+import type  { Result } from '../types/result';
+
+
+interface ResultsDisplayProps {
+  results: Result[];
+  isLoading: boolean;
+  error: string | null;
+}
 
 // Um "mapa" para associar o tipo de resultado a um ícone específico.
 // Esta é uma forma limpa e declarativa de escolher o ícone certo.
@@ -15,10 +23,10 @@ const iconMap = {
   video_links: <Youtube className="text-red-500" />
 };
 
-function ResultsDisplay() {
+export default function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProps) {
 
   const [copiedId, setCopiedId] = useState<string | null>(null); // Estado para armazenar o ID do card copiado
-   const [showAnswers, setShowAnswers] = useState(true); // Estado para controlar a exibição das respostas
+  const [showAnswers, setShowAnswers] = useState(true); // Estado para controlar a exibição das respostas
 
   // Função para copiar conteúdo do card
   const handleCopy = (textToCopy: string, id: string) => {
@@ -38,26 +46,38 @@ function ResultsDisplay() {
   };
 
   // Função para formatar o conteúdo para cópia
-  const formatContentForCopy = (result: typeof resultsMock[0]): string => {
+  const formatContentForCopy = (result: Result): string => {
     switch (result.type) {
       case 'definition':
         return result.content.text;
       case 'curiosities':
         return result.content.items.map(item => `• ${item}`).join('\n');
       case 'multiple_choice_question':
-        { const optionsText = result.content.questions.map((opt, i) => `${String.fromCharCode(65 + i)}) ${opt}`).join('\n');
-        return `${result.content.questions}\n\n${optionsText}`; }
+        // CORREÇÃO DE BUG: Iteramos sobre as questões para formatar o texto
+        return result.content.questions.map((q, index) => {
+          const optionsText = q.options.map((opt, i) => `  ${String.fromCharCode(97 + i)}) ${opt}`).join('\n');
+          return `${index + 1}. ${q.question}\n${optionsText}`;
+        }).join('\n\n');
       case 'open_ended_question':
-        return result.content.prompt;
+        return result.content.question;
       case 'video_links':
-        return result.content.videos.map(video => `${video.title}: ${video.url}`).join('\n');
+        return result.content.links.map(video => `${video.title}: ${video.url}`).join('\n');
       default:
+        // Caso algum tipo não seja mapeado
         return '';
     }
   };
 
+    // LÓGICA PARA EXIBIR ESTADOS DE CARREGAMENTO E ERRO
+  if (isLoading) {
+    return <div className="text-center p-8">Carregando recursos...</div>;
+  }
+  if (error) {
+    return <div className="text-center p-8 text-red-500">Erro: {error}</div>;
+  }
+
   return (
-    <div className="bg-gray-50 min-h-screen p-8 ">
+    <div className="p-8">
 
       <div className="flex justify-end mb-6">
         <ToggleSwitch 
@@ -68,9 +88,9 @@ function ResultsDisplay() {
       </div>
 
       <div className='space-y-6'>      
+        
         {/* .map para interar sobre todos os elementos retornados */}
-        {resultsMock.map((result) => (
-          
+        {results.map((result) => (          
           <CardResult 
             key={result.id} // A KEY, usando o ID único e estável do dado
             title={result.title}
@@ -133,12 +153,12 @@ function ResultsDisplay() {
             )}
 
             {result.type === 'open_ended_question' && (
-              <p className="font-medium text-gray-800">{result.content.prompt}</p>
+              <p className="font-medium text-gray-800">{result.content.question}</p>
             )}
 
             {result.type === 'video_links' && (
               <div className="space-y-2">
-                {result.content.videos.map((video) => (
+                {result.content.links.map((video) => (
                   <a key={video.id} href={video.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-2">
                     <Link size={16} />
                     {video.title} ({video.platform})
@@ -156,4 +176,3 @@ function ResultsDisplay() {
   );
 } 
 
-export default ResultsDisplay;
