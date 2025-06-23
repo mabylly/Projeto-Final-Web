@@ -1,5 +1,4 @@
 // src/components/AboutContent.tsx
-import React from 'react';
 import TeamMember from './TeamMember.tsx'; // Importando o novo componente
 
 // Dados da equipe para facilitar a manutenção
