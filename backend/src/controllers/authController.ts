@@ -1,4 +1,3 @@
-// controllers/authController.ts
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../utils/jwtUtils';

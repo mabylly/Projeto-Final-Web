@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from "../components/Modal";
 import { AuthForm } from "../components/AuthForm";
-import { authService } from '../services/authServices'; 
+import { authService } from '../services/authServices';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -12,12 +12,12 @@ interface AuthModalProps {
     login: string;
     register: string;
   };
-  onSuccess?: (user: any) => void; 
+  onSuccess?: (user: any) => void;
 }
 
-export default function AuthModal({ 
-  isOpen, 
-  onClose, 
+export default function AuthModal({
+  isOpen,
+  onClose,
   initialMode = 'login',
   title = "pedagog.ia",
   subtitle = {
@@ -29,36 +29,48 @@ export default function AuthModal({
   const [mode, setMode] = useState<'login' | 'register'>(initialMode);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [formKey, setFormKey] = useState(0); // Força re-renderização do formulário
 
   useEffect(() => {
     setMode(initialMode);
-    setError(null); 
+    setError(null);
+    setSuccessMessage(null);
+    setFormKey(prev => prev + 1); // Reseta o formulário quando muda o modo inicial
   }, [initialMode]);
 
   const handleSubmit = async (formData: { name: string; email: string; password: string }) => {
     setIsLoading(true);
     setError(null);
+    setSuccessMessage(null);
     
     try {
       let response;
       
       if (mode === 'login') {
-        response = await authService.login({ 
-          email: formData.email, 
-          password: formData.password 
+        response = await authService.login({
+          email: formData.email,
+          password: formData.password
         });
-        console.log('Usuário logado:', response.user);
+        
+        // Só chama onSuccess e fecha o modal no LOGIN
+        if (onSuccess) {
+          onSuccess(response.user);
+        }
+        onClose();
+        
       } else {
+        // CADASTRO
         response = await authService.register(formData);
-        console.log('Usuário cadastrado:', response.user);
+        
+        // Exibe mensagem de sucesso e muda para o modo login
+        setSuccessMessage('Cadastro realizado com sucesso! Agora faça login com suas credenciais.');
+        setMode('login');
+        setFormKey(prev => prev + 1); // Força re-renderização para limpar os campos
+        
+        // NÃO chama onSuccess nem fecha o modal no cadastro
       }
       
-      // Chamar callback de sucesso se fornecido
-      if (onSuccess) {
-        onSuccess(response.user);
-      }
-      
-      onClose(); 
     } catch (err: any) {
       console.error('Erro na autenticação:', err);
       setError(err.message || 'Erro na autenticação');
@@ -69,7 +81,9 @@ export default function AuthModal({
 
   const switchMode = () => {
     setMode(mode === 'login' ? 'register' : 'login');
-    setError(null); 
+    setError(null);
+    setSuccessMessage(null);
+    setFormKey(prev => prev + 1); // Limpa os campos ao trocar de modo manualmente
   };
 
   return (
@@ -87,7 +101,14 @@ export default function AuthModal({
         </div>
       )}
 
+      {successMessage && (
+        <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+          {successMessage}
+        </div>
+      )}
+
       <AuthForm
+        key={formKey} // Força re-renderização para limpar campos
         mode={mode}
         onSubmit={handleSubmit}
         onSwitchMode={switchMode}
