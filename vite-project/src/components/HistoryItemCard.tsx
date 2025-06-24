@@ -45,10 +45,6 @@ export default function HistoryItemCard({ item, isCurrent = false }: HistoryItem
             <span>Nível: {item.readingLevel}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Languages size={16} />
-            <span>Idioma: {item.language}</span>
-          </div>
-          <div className="flex items-center gap-2">
             <Calendar size={16} />
             <span>Data: {item.createdAt}</span>
           </div>

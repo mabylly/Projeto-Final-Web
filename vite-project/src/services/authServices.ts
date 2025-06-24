@@ -91,7 +91,7 @@ class AuthService {
 
   async logout(): Promise<void> {
     try {
-      // Tentar fazer logout no servidor (opcional)
+      // Tentar fazer logout no servidor 
       await fetch(`${API_BASE_URL}/auth/logout`, {
         method: 'POST',
         headers: this.getAuthHeaders()
@@ -100,7 +100,7 @@ class AuthService {
       console.error('Erro no logout do servidor:', error);
       // Continuar mesmo se der erro no servidor
     } finally {
-      // Sempre remover o token do localStorage
+      // Remover o token do localStorage
       this.removeToken();
     }
   }
@@ -139,7 +139,7 @@ class AuthService {
     }
   }
 
-  // Método corrigido para decodificar token com UTF-8 adequado
+  // Método para decodificar token com UTF-8 adequado
   private decodeTokenPayload(token: string): any {
     try {
       // Separar as partes do token

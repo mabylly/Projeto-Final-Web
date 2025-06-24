@@ -8,27 +8,23 @@ export const historyMock: HistoryItem[] = [
     searchTerm: 'velocity',
     createdAt: 'June 23rd, 2025',
     readingLevel: '5th Grade',
-    language: 'English'
   },
   {
     id: 'hist-002',
     searchTerm: 'gravity',
     createdAt: 'June 23rd, 2025',
     readingLevel: '5th Grade',
-    language: 'English'
   },
   {
     id: 'hist-003',
     searchTerm: 'Identify unique properties of each state of matter',
     createdAt: 'June 21st, 2025',
     readingLevel: '5th Grade',
-    language: 'English',
   },
   {
     id: 'hist-004',
     searchTerm: 'Ciclo da Água',
     createdAt: 'June 20th, 2025',
     readingLevel: 'Ensino Fundamental',
-    language: 'Portuguese'
   }
 ];
