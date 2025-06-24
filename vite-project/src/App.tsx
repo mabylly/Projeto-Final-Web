@@ -3,8 +3,10 @@ import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage'; 
 import Resultpage from './pages/Resultpage';
 import About from './pages/About';
+import HistoryPage from './pages/HistoryPage.tsx'; 
 import Header from './components/Header'; 
 import { authService } from './services/authServices';
+
 
 function App() {
   const [user, setUser] = useState<any | null>(null);
@@ -38,6 +40,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/results" element={<Resultpage />} />
         <Route path="/about" element={<About />} />
+        <Route path="/history" element={<HistoryPage />} />
       </Routes>
     </div>
   );

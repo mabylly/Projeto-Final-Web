@@ -112,9 +112,9 @@ export default function Header({ onAuthChange }: HeaderProps) {
           {isLoggedIn ? (
             // Navbar para usuário LOGADO
             <>
-              <a href="#" className="px-3 py-2 rounded-md hover:bg-yellow-200 transition-colors duration-200">
+              <Link to="/history" className="px-3 py-2 rounded-md hover:bg-yellow-200 transition-colors duration-200">
                 Meus Recursos
-              </a>
+              </Link>
                 
               <div className="relative dropdown-container">
                 <button

@@ -37,7 +37,7 @@ export default function HomePage() {
       console.log("Resposta da API:", JSON.stringify(data, null, 2));
 
       // Navegamos para a página de resultados, passando os dados via 'state'
-      navigate('/results', { state: { results: data } });
+      navigate('/results', { state: { results: data, searchTerm: topic } });
 
     //Comentario para desabilitar eslint
     // eslint-disable-next-line @typescript-eslint/no-explicit-any 
