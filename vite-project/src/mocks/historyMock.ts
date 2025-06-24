@@ -23,7 +23,6 @@ export const historyMock: HistoryItem[] = [
     createdAt: 'June 21st, 2025',
     readingLevel: '5th Grade',
     language: 'English',
-    standard: 'SC.05.PS.01.02' // Exemplo com o campo opcional
   },
   {
     id: 'hist-004',
