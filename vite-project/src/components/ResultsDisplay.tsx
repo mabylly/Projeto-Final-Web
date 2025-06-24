@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BookOpen, ClipboardCheck, Lightbulb, Link, Youtube, Check } from 'lucide-react';
+import { BookMarked, BookOpen, ClipboardCheck, Lightbulb, Check }  from 'lucide-react';
 
 import CardResult from "../components/CardResult";
 import ToggleSwitch from '../components/ToggleSwitch';
@@ -15,12 +15,12 @@ interface ResultsDisplayProps {
 
 // Um "mapa" para associar o tipo de resultado a um ícone específico.
 // Esta é uma forma limpa e declarativa de escolher o ícone certo.
-const iconMap = {
+const iconMap: { [key: string]: React.ReactNode } = {
   definition: <BookOpen className="text-blue-500" />,
   curiosities: <Lightbulb className="text-yellow-500" />,
   multiple_choice_question: <ClipboardCheck className="text-green-500" />,
   open_ended_question: <ClipboardCheck className="text-purple-500" />,
-  video_links: <Youtube className="text-red-500" />
+  book_recommendation: <BookMarked className="text-indigo-500" /> // Adicionamos o novo tipo
 };
 
 export default function ResultsDisplay({ results, isLoading, error }: ResultsDisplayProps) {
@@ -59,11 +59,12 @@ export default function ResultsDisplay({ results, isLoading, error }: ResultsDis
           return `${index + 1}. ${q.question}\n${optionsText}`;
         }).join('\n\n');
       case 'open_ended_question':
-        return result.content.question;
-      case 'video_links':
-        return result.content.links.map(video => `${video.title}: ${video.url}`).join('\n');
+        return result.content.prompts.map((p, index) => `${index + 1}. ${p.prompt}`).join('\n\n');
+      case 'book_recommendation':
+        return result.content.recommendations.map(rec => 
+          `Título: ${rec.title}\nAutor: ${rec.author} (${rec.year})\n\nResumo: ${rec.summary}\n\nMotivo da Recomendação: ${rec.reasoning}`
+        ).join('\n\n---\n\n');
       default:
-        // Caso algum tipo não seja mapeado
         return '';
     }
   };
@@ -152,21 +153,38 @@ export default function ResultsDisplay({ results, isLoading, error }: ResultsDis
               </div>
             )}
 
-            {result.type === 'open_ended_question' && (
-              <p className="font-medium text-gray-800">{result.content.question}</p>
-            )}
-
-            {result.type === 'video_links' && (
-              <div className="space-y-2">
-                {result.content.links.map((video) => (
-                  <a key={video.id} href={video.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-2">
-                    <Link size={16} />
-                    {video.title} ({video.platform})
-                  </a>
+            {result.type === 'open_ended_question' && Array.isArray(result.content.prompts) && (
+              <div className="space-y-6">
+                {result.content.prompts.map((p, index) => (
+                  <div key={p.id}>
+                    <p className="font-medium text-gray-800">{`${index + 1}. ${p.prompt}`}</p>
+                  </div>
                 ))}
               </div>
             )}
 
+            {result.type === 'book_recommendation' && Array.isArray(result.content.recommendations) && (
+              <div className="space-y-6">
+                {result.content.recommendations.map((rec) => (
+                  <div key={rec.title} className="border-t pt-4 first:pt-0 first:border-t-0">
+                    <h4 className="font-bold text-gray-800">{rec.title} ({rec.year})</h4>
+                    <p className="text-sm text-gray-600 italic">por {rec.author}</p>
+                    
+                    <div className="mt-3 space-y-3">
+                      <div>
+                        <h5 className="font-semibold text-sm text-gray-700">Resumo</h5>
+                        <p className="mt-1 text-gray-600 text-sm leading-relaxed">{rec.summary}</p>
+                      </div>
+                      <div>
+                        <h5 className="font-semibold text-sm text-gray-700">Por que ler este livro?</h5>
+                        <p className="mt-1 text-gray-600 text-sm leading-relaxed">{rec.reasoning}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
           </CardResult>
         ))}
       </div>

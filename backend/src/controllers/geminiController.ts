@@ -23,11 +23,16 @@ export const generateContent = async (req: Request, res: Response) => {
 
       Gere a resposta EXATAMENTE no seguinte formato JSON, sem adicionar nenhum texto ou formatação extra antes ou depois do JSON.
 
-      O formato deve ser um array de objetos. Tente incluir uma variedade de tipos de recursos da lista de tipos possíveis.
+      O formato deve ser um array de objetos. Siga estas regras de quantidade:
+      - Gere um card do tipo "definition".
+      - Gere um card do tipo "curiosities" com pelo menos 4 itens.
+      - Gere pelo menos 5 questões no tipo "multiple_choice_question".
+      - Gere exatamente 3 questões no tipo "open_ended_question".
+      - Gere exatamente 2 recomendações no tipo "book_recommendation".
 
       Estrutura de cada objeto:
       - "id": uma string única e descritiva em formato kebab-case.
-      - "type": uma das seguintes strings: "definition", "curiosities", "multiple_choice_question", "open_ended_question", "video_links".
+      - "type": uma das seguintes strings: "definition", "curiosities", "multiple_choice_question", "open_ended_question", "book_recommendation".
       - "title": um título claro e conciso para o card.
       - "content": um objeto cujo conteúdo varia de acordo com o "type".
 
@@ -45,7 +50,7 @@ export const generateContent = async (req: Request, res: Response) => {
           "id": "cur-exemplo", 
           "type": "curiosities", 
           "title": "Curiosidades", 
-          "content": { "items": ["Uma lista de strings com curiosidades.", "Cada string é um item da lista."] } 
+          "content": { "items": ["Curiosidade 1...", "Curiosidade 2..."] } 
         },
         { 
           "id": "mcq-exemplo", 
@@ -60,16 +65,27 @@ export const generateContent = async (req: Request, res: Response) => {
         {
           "id": "oeq-exemplo",
           "type": "open_ended_question",
-          "title": "Atividade: Pergunta Dissertativa",
-          "content": { "prompt": "O texto da pergunta dissertativa deve estar na chave 'prompt'." } 
+          "title": "Atividade: Perguntas Dissertativas",
+          "content": { 
+            "prompts": [
+              { "id": "p1-exemplo", "prompt": "O texto da primeira pergunta dissertativa." },
+              { "id": "p2-exemplo", "prompt": "O texto da segunda pergunta dissertativa." }
+            ]
+          } 
         },
         {
-          "id": "vid-exemplo",
-          "type": "video_links",
-          "title": "Vídeos Sugeridos",
+          "id": "liv-exemplo",
+          "type": "book_recommendation",
+          "title": "Leituras Recomendadas",
           "content": { 
-            "videos": [
-              { "id": "vid-yt-123", "title": "Título do Vídeo 1", "url": "https://www.youtube.com/watch?v=exemplo1", "platform": "YouTube" }
+            "recommendations": [
+              { 
+                "title": "Título do Livro ou Artigo", 
+                "author": "Nome do Autor", 
+                "year": 1928, 
+                "summary": "Um breve resumo do enredo ou do conteúdo principal da obra.", 
+                "reasoning": "Uma explicação detalhada do porquê este livro é uma leitura fundamental para entender o tópico, conectando a obra com o contexto do ${topic}." 
+              }
             ] 
           }
         }

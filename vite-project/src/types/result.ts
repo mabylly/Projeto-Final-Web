@@ -22,22 +22,32 @@ interface MultipleChoiceContent {
   questions: Question[];
 }
 
-// --- FIM DA MUDANÇA ---
+
+interface OpenEndedQuestion {
+  id: string;
+  prompt: string;
+}
 
 interface OpenEndedContent {
-  question: string;
+  prompts: OpenEndedQuestion[];
 }
 
-interface VideoLinksContent {
-  links: { id: string; title: string; url: string; platform: string }[];
+interface BookRecommendation {
+  title: string;
+  author: string;
+  year: number;
+  summary: string;     // campo para o resumo
+  reasoning: string;   // campo para a justificativa
+}
+
+interface BookRecommendationContent {
+  recommendations: BookRecommendation[];
 }
 
 
-// A União Discriminada continua a mesma, mas agora ela aponta
-// para a nossa nova e correta interface MultipleChoiceContent.
 export type Result =
   | { id: string; type: 'definition'; title: string; content: DefinitionContent }
-  | { id: string; type: 'curiosities'; title: string; content: CuriositiesContent }
+  | { id: string; type: 'curiosities'; title: string; content: CuriositiesContent } 
   | { id: string; type: 'multiple_choice_question'; title: string; content: MultipleChoiceContent }
   | { id: string; type: 'open_ended_question'; title: string; content: OpenEndedContent }
-  | { id: string; type: 'video_links'; title: string; content: VideoLinksContent };
+  | { id: string; type: 'book_recommendation'; title: string; content: BookRecommendationContent };
