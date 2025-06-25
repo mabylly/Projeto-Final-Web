@@ -7,7 +7,7 @@ import { historyMock } from '../mocks/historyMock';
 export default function HistoryPage() {
   const location = useLocation();
   // Pega o termo da busca do estado da navegação, se existir
-  const currentSearchTerm = location.state?.searchTerm;
+  const currentSearchTerm = location.state?.searchTermFromHistory;
 
   const historyItems = historyMock;
 
@@ -18,7 +18,7 @@ export default function HistoryPage() {
       </h1>
       {currentSearchTerm && (
         <p className="text-md text-gray-600 mb-8">
-          Mostrando o resultado destacado para: <span className="font-semibold">"{currentSearchTerm}"</span>
+          Você acabou de pesquisar por: <span className="font-semibold">"{currentSearchTerm}"</span>
         </p>
       )}
 
@@ -28,8 +28,8 @@ export default function HistoryPage() {
             <HistoryItemCard 
               key={item.id} 
               item={item} 
-              // Passa 'true' para o card cujo termo de busca bate com o termo atual
-              isCurrent={item.searchTerm === currentSearchTerm}
+              // A lógica de highlight agora usa 'item.topic'
+              isCurrent={item.topic === currentSearchTerm}
             />
           ))}
         </div>
