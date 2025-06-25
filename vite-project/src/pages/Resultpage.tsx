@@ -1,52 +1,52 @@
-// src/pages/Resultpage.tsx
+import { useLocation } from "react-router-dom";
+import { useState, useEffect } from 'react';
 
-import { useLocation, Link } from 'react-router-dom';
-import { History } from 'lucide-react';
 import ResultsDisplay from "../components/ResultsDisplay";
+import SkeletonCard from '../components/SkeletonCard';
+import { loadingMessages } from '../constants/index';
 
 export default function Resultpage() {
   const location = useLocation();
+  const { results, isLoading, error } = location.state || { results: [], isLoading: false, error: null };
 
-  // Agora também pegamos o 'searchTerm' do estado
-  const { results, searchTerm } = location.state || { results: [], searchTerm: '' };
+  const [currentMessage, setCurrentMessage] = useState(loadingMessages[0]);
+  // Efeito para trocar a mensagem de carregamento a cada 2 segundos
+  useEffect(() => {
+    if (isLoading) {
+      let messageIndex = 0;
+      const interval = setInterval(() => {
+        messageIndex = (messageIndex + 1) % loadingMessages.length;
+        setCurrentMessage(loadingMessages[messageIndex]);
+      }, 2500); // Muda a cada 2.5 segundos
 
-  // Verificação para caso o usuário acesse a página diretamente
-  if (!results || results.length === 0) {
+      return () => clearInterval(interval); // Limpa o intervalo quando o componente desmontar
+    }
+  }, [isLoading]);
+
+  // Se estiver carregando, mostramos a UI de carregamento
+  if (isLoading) {
     return (
-      <div className="text-center p-8">
-        <h2 className="text-2xl font-bold mb-4">Nenhum resultado para exibir.</h2>
-        <Link to="/" className="text-blue-600 hover:underline">
-          Voltar para a página de busca
-        </Link>
+      <div className="p-8">
+        <div className="text-center mb-8">
+          <p className="text-xl font-semibold text-gray-700">{currentMessage}</p>
+        </div>
+        <div className="space-y-6">
+          {/* Mostramos 3 esqueletos para dar a sensação de volume */}
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
       </div>
     );
   }
 
+  // Se não estiver carregando, mostramos o ResultsDisplay
   return (
     <div className="p-8">
-      {/* --- NOVO CABEÇALHO DA PÁGINA DE RESULTADOS --- */}
-      <div className="max-w-full mx-auto mb-8 p-4 bg-white rounded-lg border border-gray-200 shadow-sm flex justify-between items-center">
-        <div>
-          <p className="text-sm text-gray-500">Resultados para:</p>
-          <h1 className="text-2xl font-bold text-gray-900">{searchTerm}</h1>
-        </div>
-        
-        {/* Este é o link que conecta com a página de histórico */}
-        <Link 
-          to="/history"
-          state={{ searchTerm: searchTerm }} // Passa o termo atual para o histórico
-          className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors"
-        >
-          <History size={18} />
-          Ver no Histórico
-        </Link>
-      </div>
-      
-      {/* O componente que já existia continua aqui, mostrando os resultados */}
       <ResultsDisplay 
         results={results}
         isLoading={false}
-        error={null}
+        error={error}
       />
     </div>
   );

@@ -11,7 +11,7 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-   const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleSearch = async () => {
     if (!topic || !grade) {
@@ -20,6 +20,16 @@ export default function HomePage() {
     }
     setIsLoading(true);
     setError(null);
+
+    // Antes de chamar a API, navegamos para a página de resultados
+    // já informando que ela está em estado de carregamento.
+    navigate('/results', { 
+      state: { 
+        isLoading: true,
+        results: [], // Array vazio por enquanto
+        error: null 
+      } 
+    });
 
     // Fazemos a requisição para a API do backend
     // Passando o tópico e a série como corpo da requisição
@@ -36,12 +46,24 @@ export default function HomePage() {
 
       console.log("Resposta da API:", JSON.stringify(data, null, 2));
 
-      // Navegamos para a página de resultados, passando os dados via 'state'
-      navigate('/results', { state: { results: data, searchTerm: topic } });
+      navigate('/results', { 
+        state: { 
+          isLoading: false, 
+          results: data, 
+          error: null 
+        } 
+      });
 
     //Comentario para desabilitar eslint
     // eslint-disable-next-line @typescript-eslint/no-explicit-any 
     } catch (err: any) {
+      navigate('/results', { 
+        state: { 
+          isLoading: false, 
+          results: [], 
+          error: err.message || 'Ocorreu um erro.' 
+        } 
+      });
       setError(err.message || 'Ocorreu um erro.');
       setIsLoading(false);
     }

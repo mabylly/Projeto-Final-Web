@@ -140,6 +140,7 @@ class AuthService {
   }
 
   // Método para decodificar token com UTF-8 adequado
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private decodeTokenPayload(token: string): any {
     try {
       // Separar as partes do token
