@@ -44,7 +44,7 @@ export default function HomePage() {
       
       const data = await response.json();
 
-      console.log("Resposta da API:", JSON.stringify(data, null, 2));
+      //console.log("Resposta da API:", JSON.stringify(data, null, 2));
 
       navigate('/results', { 
         state: { 

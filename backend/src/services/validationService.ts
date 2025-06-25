@@ -41,12 +41,12 @@ export function validateAndNormalizeData(data: any): Result[] {
   const validationResult = ApiResponseSchema.safeParse(data);
 
   if (validationResult.success) {
-    console.log("Validação Zod passou de primeira!");
+    //console.log("Validação Zod passou de primeira!");
     return validationResult.data; // Se os dados estão perfeitos, retornamos
   }
 
   // Se a validação falhou, tentamos "normalizar" os erros conhecidos
-  console.log("Validação Zod falhou, tentando normalizar os dados...");
+  //console.log("Validação Zod falhou, tentando normalizar os dados...");
   
   if (!Array.isArray(data)) {
     throw new Error("A resposta da API não é um array.");
@@ -69,7 +69,7 @@ export function validateAndNormalizeData(data: any): Result[] {
   // Tentamos validar novamente com os dados normalizados
   const finalValidation = ApiResponseSchema.safeParse(normalizedData);
   if (finalValidation.success) {
-    console.log("Normalização bem-sucedida!");
+    //console.log("Normalização bem-sucedida!");
     return finalValidation.data;
   } else {
     // Se ainda assim falhar, lançamos um erro detalhado

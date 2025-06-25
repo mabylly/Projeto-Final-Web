@@ -1,4 +1,5 @@
 // routes/authRoutes.ts
+
 import express from 'express';
 import { 
   register, 
@@ -12,16 +13,14 @@ import { authenticateToken } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
-// Rotas públicas
+// ---- Rotas Públicas (não exigem token) ----
 router.post('/register', register);
 router.post('/login', login);
+router.get('/health', healthCheck); // Rota de verificação de status
 
-// Rotas protegidas
+// ---- Rotas Protegidas (exigem um token JWT válido) ----
 router.get('/me', authenticateToken, getCurrentUser);
 router.put('/profile', authenticateToken, updateProfile);
 router.post('/logout', authenticateToken, logout);
-
-// Rota de health check 
-router.get('/health', healthCheck);
 
 export default router;

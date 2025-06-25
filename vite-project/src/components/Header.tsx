@@ -60,7 +60,7 @@ export default function Header({ onAuthChange }: HeaderProps) {
       onAuthChange(true, user);
     }
     
-    console.log('Usuário autenticado:', user);
+    //console.log('Usuário autenticado:', user);
   };
 
   // Função de logout
@@ -76,7 +76,7 @@ export default function Header({ onAuthChange }: HeaderProps) {
         onAuthChange(false);
       }
       
-      console.log('Usuário deslogado com sucesso');
+      //console.log('Usuário deslogado com sucesso');
     } catch (error) {
       console.error('Erro no logout:', error);
     }
