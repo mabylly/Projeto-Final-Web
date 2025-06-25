@@ -9,7 +9,7 @@ const teamMembers = [
     role: "CEO & Co-fundadora"
   },
   {
-    imageUrl: "https://i.pravatar.cc/150?u=a042581f4e29026704e",
+    imageUrl: "https://avatars.githubusercontent.com/u/131299540?v=4",
     name: "Lucas Santos",
     role: "CTO & Co-fundador"
   },
