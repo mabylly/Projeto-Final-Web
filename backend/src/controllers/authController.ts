@@ -1,170 +1,94 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
+import { userService } from '../services/userService';
 import { generateToken } from '../utils/jwtUtils';
-import { findUserByEmail, createUser, findUserById, updateUser } from '../models/userModels';
 import { AuthRequest } from '../middleware/authMiddleware';
 
-export const register = async (req: Request, res: Response): Promise<void> => {
+// Função para tratar erros de forma padronizada
+const handleError = (res: Response, error: any, context: string) => {
+  console.error(`Erro em ${context}:`, error);
+  // Retorna erros específicos se a mensagem for conhecida, senão um erro genérico
+  if (error.message.includes('Credenciais inválidas') || error.message.includes('Usuário já existe')) {
+    return res.status(400).json({ error: error.message });
+  }
+  if (error.message.includes('Usuário não encontrado')) {
+    return res.status(404).json({ error: error.message });
+  }
+  return res.status(500).json({ error: 'Erro interno do servidor.' });
+};
+
+export const register = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
-
-    // Validação básica
     if (!name || !email || !password) {
-      res.status(400).json({ error: 'Todos os campos são obrigatórios' });
-      return;
+      return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
     }
 
-    // Verificar se usuário já existe
-    const existingUser = await findUserByEmail(email);
-    if (existingUser) {
-      res.status(400).json({ error: 'Usuário já existe com este email' });
-      return;
-    }
-
-    // Hash da senha
-    const saltRounds = 12;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    // Criar usuário
-    const newUser = await createUser({
-      name,
-      email,
-      password: hashedPassword
-    });
-
-    // Gerar token
+    const newUser = await userService.register({ name, email, password });
     const token = generateToken({ 
       id: newUser.id, 
       email: newUser.email, 
       name: newUser.name 
     });
-
-    // Retornar sem a senha
     const { password: _, ...userWithoutPassword } = newUser;
 
-    res.status(201).json({
-      message: 'Usuário cadastrado com sucesso',
-      token,
-      user: userWithoutPassword
-    });
-
+    return res.status(201).json({ user: userWithoutPassword, token });
   } catch (error) {
-    console.error('Erro no registro:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    return handleError(res, error, 'register');
   }
 };
 
-export const login = async (req: Request, res: Response): Promise<void> => {
+export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-
-    // Validação básica
     if (!email || !password) {
-      res.status(400).json({ error: 'Email e senha são obrigatórios' });
-      return;
+      return res.status(400).json({ error: 'Email e senha são obrigatórios' });
     }
 
-    const user = await findUserByEmail(email);
-    if (!user) {
-      res.status(400).json({ error: 'Usuário não encontrado' });
-      return;
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      res.status(401).json({ error: 'Senha incorreta' });
-      return;
-    }
-
+    const user = await userService.login(email, password);
     const token = generateToken({ 
       id: user.id, 
       email: user.email, 
       name: user.name 
     });
-
-    // Retornar sem a senha
     const { password: _, ...userWithoutPassword } = user;
 
-    res.json({ 
-      message: 'Login bem-sucedido', 
-      token, 
-      user: userWithoutPassword 
-    });
-
+    return res.json({ user: userWithoutPassword, token });
   } catch (error) {
-    console.error('Erro no login:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    return handleError(res, error, 'login');
   }
 };
 
-export const getCurrentUser = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getCurrentUser = async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.user) {
-      res.status(401).json({ error: 'Usuário não autenticado' });
-      return;
-    }
-
-    const user = await findUserById(req.user.id);
-    if (!user) {
-      res.status(404).json({ error: 'Usuário não encontrado' });
-      return;
-    }
-
-    // Retornar sem a senha
-    const { password: _, ...userWithoutPassword } = user;
-
-    res.json({ user: userWithoutPassword });
-
+    if (!req.user) return res.status(401).json({ error: 'Não autorizado' });
+    
+    const userProfile = await userService.getUserProfile(req.user.id);
+    return res.json({ user: userProfile });
   } catch (error) {
-    console.error('Erro ao obter usuário atual:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    return handleError(res, error, 'getCurrentUser');
   }
 };
 
-export const updateProfile = async (req: AuthRequest, res: Response): Promise<void> => {
+export const updateProfile = async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.user) {
-      res.status(401).json({ error: 'Usuário não autenticado' });
-      return;
-    }
+    if (!req.user) return res.status(401).json({ error: 'Não autorizado' });
 
     const { name } = req.body;
-
-    if (!name) {
-      res.status(400).json({ error: 'Nome é obrigatório' });
-      return;
-    }
-
-    const updatedUser = await updateUser(req.user.id, { name });
-    if (!updatedUser) {
-      res.status(404).json({ error: 'Usuário não encontrado' });
-      return;
-    }
-
-    // Retornar sem a senha
+    const updatedUser = await userService.updateUserProfile(req.user.id, { name });
     const { password: _, ...userWithoutPassword } = updatedUser;
-
-    res.json({ 
-      message: 'Perfil atualizado com sucesso',
-      user: userWithoutPassword 
-    });
-
+    
+    return res.json({ message: 'Perfil atualizado com sucesso', user: userWithoutPassword });
   } catch (error) {
-    console.error('Erro ao atualizar perfil:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    return handleError(res, error, 'updateProfile');
   }
 };
 
-export const logout = async (req: Request, res: Response): Promise<void> => {
-  // Como estamos usando JWT stateless, o logout é feito no frontend
-  // Aqui podemos apenas confirmar o logout
+// As funções de logout e healthCheck não precisam de lógica de negócio complexa,
+// então podem permanecer como estão.
+export const logout = (req: Request, res: Response) => {
   res.json({ message: 'Logout realizado com sucesso' });
 };
 
-export const healthCheck = async (req: Request, res: Response): Promise<void> => {
-  res.json({ 
-    status: 'ok', 
-    message: 'API está funcionando corretamente',
-    timestamp: new Date().toISOString()
-  });
+export const healthCheck = (req: Request, res: Response) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
 };
