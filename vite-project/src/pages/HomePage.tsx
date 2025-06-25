@@ -33,10 +33,21 @@ export default function HomePage() {
 
     // Fazemos a requisição para a API do backend
     // Passando o tópico e a série como corpo da requisição
+    const token = localStorage.getItem('authToken');
+    // Definindo os headers para a requisição
+    // Incluindo o token de autenticação se estiver disponível
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    console.log("Token enviado para req de pesquisa: "+token);
+
     try {
       const response = await fetch('http://localhost:3001/api/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: headers,
         body: JSON.stringify({ topic, grade }),
       });
 
