@@ -9,14 +9,14 @@ class AuthService {
 
   private setToken(token: string): void {
     localStorage.setItem('auth_token', token);
-    console.log("token setado no localStorage: "+token); 
+    console.log("token setado no localStorage: "+token);
   }
 
   private removeToken(): void {
     localStorage.removeItem('auth_token');
   }
 
-  private getAuthHeaders() {
+  public getAuthHeaders() {
     const token = this.getToken();
     return {
       'Content-Type': 'application/json',
@@ -56,6 +56,23 @@ class AuthService {
         body: JSON.stringify(data)
       });
       const result = await this.handleResponse<AuthResponse>(response);
+      console.log('Resposta recebida do backend:', result);
+      console.log('Analisando o token:', result.token); // Isso vai imprimir o token ou 'undefined'
+
+      // Checagem explícita
+      if (!result.token) {
+        console.error('ATENÇÃO: O backend respondeu com sucesso, mas não retornou um token!');
+      }
+      // --- FIM DO PONTO DE VERIFICAÇÃO ---
+      console.log('Resposta recebida do backend:', result);
+      console.log('Analisando o token:', result.token); // Isso vai imprimir o token ou 'undefined'
+
+      // Checagem explícita
+      if (!result.token) {
+        console.error('ATENÇÃO: O backend respondeu com sucesso, mas não retornou um token!');
+      }
+      // --- FIM DO PONTO DE VERIFICAÇÃO ---
+
       this.setToken(result.token);
       console.log("token retornado do back: "+result.token)
       return result;

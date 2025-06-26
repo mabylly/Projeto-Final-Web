@@ -1,13 +1,13 @@
+// src/pages/HomePage.tsx
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import Searchpage from './Searchpage';
+import { contentService } from '../services/contentService'; // <-- Importe o novo serviço
 
 export default function HomePage() {
-
   const [topic, setTopic] = useState('');
   const [grade, setGrade] = useState('');
-
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,42 +21,21 @@ export default function HomePage() {
     setIsLoading(true);
     setError(null);
 
-    // Antes de chamar a API, navegamos para a página de resultados
-    // já informando que ela está em estado de carregamento.
+    // Navega para a página de resultados, mostrando que está carregando
     navigate('/results', { 
       state: { 
         isLoading: true,
-        results: [], // Array vazio por enquanto
+        results: [], 
         error: null 
       } 
     });
 
-    // Fazemos a requisição para a API do backend
-    // Passando o tópico e a série como corpo da requisição
-    const token = localStorage.getItem('auth_token');
-    // Definindo os headers para a requisição
-    // Incluindo o token de autenticação se estiver disponível
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-    };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-    console.log("Token enviado para req de pesquisa: "+token);
-
     try {
-      const response = await fetch('http://localhost:3001/api/generate', {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({ topic, grade }),
-      });
+      // --- LÓGICA DE FETCH SIMPLIFICADA ---
+      // Chamamos nosso serviço, que cuida de tudo (headers, token, etc.)
+      const data = await contentService.generateContent(topic, grade);
 
-      if (!response.ok) throw new Error('Falha ao buscar os dados da API.');
-      
-      const data = await response.json();
-
-      console.log("Resposta da API:", JSON.stringify(data, null, 2));
-
+      // Se a chamada foi bem-sucedida, navegamos para os resultados com os dados
       navigate('/results', { 
         state: { 
           isLoading: false, 
@@ -65,9 +44,8 @@ export default function HomePage() {
         } 
       });
 
-    //Comentario para desabilitar eslint
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any 
     } catch (err: any) {
+      // Se deu erro, navegamos para os resultados exibindo a mensagem de erro
       navigate('/results', { 
         state: { 
           isLoading: false, 
@@ -75,7 +53,8 @@ export default function HomePage() {
           error: err.message || 'Ocorreu um erro.' 
         } 
       });
-      setError(err.message || 'Ocorreu um erro.');
+    } finally {
+      // Independentemente do resultado, o loading no HomePage acaba aqui
       setIsLoading(false);
     }
   };
@@ -90,8 +69,8 @@ export default function HomePage() {
         onSearch={handleSearch}
         isLoading={isLoading}
       />
+      {/* O erro agora é exibido na página de resultados, mas podemos manter aqui também se quisermos */}
       {error && <p className="text-center text-red-500 mt-4">{error}</p>}
     </>
   );
 }
-
