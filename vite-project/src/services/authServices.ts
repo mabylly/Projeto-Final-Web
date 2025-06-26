@@ -9,6 +9,7 @@ class AuthService {
 
   private setToken(token: string): void {
     localStorage.setItem('auth_token', token);
+    console.log("token setado no localStorage: "+token); 
   }
 
   private removeToken(): void {
@@ -56,6 +57,7 @@ class AuthService {
       });
       const result = await this.handleResponse<AuthResponse>(response);
       this.setToken(result.token);
+      console.log("token retornado do back: "+result.token)
       return result;
     } catch (error) {
       console.error('Erro no login:', error);

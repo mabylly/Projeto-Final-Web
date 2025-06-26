@@ -33,7 +33,7 @@ export default function HomePage() {
 
     // Fazemos a requisição para a API do backend
     // Passando o tópico e a série como corpo da requisição
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('auth_token');
     // Definindo os headers para a requisição
     // Incluindo o token de autenticação se estiver disponível
     const headers: HeadersInit = {
