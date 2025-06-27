@@ -1,12 +1,17 @@
+// src/routes/apiRoutes.ts
+
 import express from 'express';
 import { generateContent } from '../controllers/geminiController';
-import { getHistory } from '../controllers/historyController';
+// Importe a nova função do controller
+import { getHistory, getHistoryDetails } from '../controllers/historyController';
 import { optionalAuthenticateToken, authenticateToken } from '../middleware/authMiddleware';
 
 const router = express.Router(); 
 
-// Quando uma requisição POST chegar em /generate, chame a função generateContent
 router.post('/generate', optionalAuthenticateToken, generateContent);
-router.get('/history', authenticateToken, getHistory);
+
+// Rotas de Histórico
+router.get('/history', authenticateToken, getHistory); // Rota para a lista de histórico
+router.get('/history/:id', authenticateToken, getHistoryDetails); // <-- NOVA ROTA para os detalhes
 
 export default router;
