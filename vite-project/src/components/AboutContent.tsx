@@ -14,7 +14,7 @@ const teamMembers = [
     role: "CTO & Co-fundador"
   },
   {
-    imageUrl: "https://i.pravatar.cc/150?u=a042581f4e29026704f",
+    imageUrl: "https://avatars.githubusercontent.com/u/138181324?s=400&u=a8fc17394f41d46c4d0f9b65e616dfe1e64fcefa&v=4",
     name: "Julio Farias",
     role: "Líder de Pedagogia"
   }
